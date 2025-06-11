@@ -30,12 +30,19 @@ const AdminUserManagement = () => {
     try {
       setLoading(true);
       // Replace with your axios call
+      const token = localStorage.getItem("token");
+
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
         {
-          credentials: "include",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
+
       const data = await response.json();
       setUsers(data.users);
     } catch (error) {
@@ -47,14 +54,18 @@ const AdminUserManagement = () => {
 
   const toggleVisibility = async (userId) => {
     try {
-      await fetch(
-        `${
+      const token = localStorage.getItem("token");
+       await fetch(
+              `${
           import.meta.env.VITE_BACKEND_URL
         }/api/admin/users/${userId}/visibility`,
         {
-          method: "PATCH",
-          credentials: "include",
-        }
+            method: "PATCH",
+             headers: {
+                "Content-Type": "application/json",
+             Authorization: `Bearer ${token}`,
+            },
+           }
       );
       fetchUsers(); // Refresh
     } catch (error) {
