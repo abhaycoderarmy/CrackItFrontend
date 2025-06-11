@@ -82,7 +82,12 @@ const ApplicantsManagement = () => {
       const res = await axios.post(
         `${APPLICATION_API_END_POINT}/status/${id}/update`,
         { status },
-        { withCredentials: true }
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       if (res.data.success) {

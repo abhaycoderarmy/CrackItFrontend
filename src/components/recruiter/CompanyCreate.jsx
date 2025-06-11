@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'sonner';
-import { useDispatch } from 'react-redux';
-import { setSingleCompany } from '@/redux/companySlice';
-import { COMPANY_API_END_POINT } from '@/utils/constant';
-import Navbar from '../shared/Navbar';
-import Footer from '../shared/Footer';
-import { 
-  Building2, 
-  ArrowRight, 
-  ArrowLeft, 
-  Sparkles, 
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setSingleCompany } from "@/redux/companySlice";
+import { COMPANY_API_END_POINT } from "@/utils/constant";
+import Navbar from "../shared/Navbar";
+import Footer from "../shared/Footer";
+import {
+  Building2,
+  ArrowRight,
+  ArrowLeft,
+  Sparkles,
   CheckCircle,
   Users,
   Target,
-  Briefcase
-} from 'lucide-react';
+  Briefcase,
+} from "lucide-react";
 
 const CompanyCreate = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [companyName, setCompanyName] = useState('');
+  const [companyName, setCompanyName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCancel = () => {
@@ -30,22 +30,23 @@ const CompanyCreate = () => {
 
   const registerNewCompany = async () => {
     if (!companyName.trim()) {
-      toast.error('Please enter a company name');
+      toast.error("Please enter a company name");
       return;
     }
 
     setIsLoading(true);
     try {
-      const res = await axios.post(`${COMPANY_API_END_POINT}/register`, 
-        { companyName }, 
+      const res = await axios.post(
+        `${COMPANY_API_END_POINT}/register`,
+        { companyName },
         {
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          withCredentials: true
         }
       );
-      
+
       if (res?.data?.success) {
         dispatch(setSingleCompany(res.data.company));
         toast.success(res.data.message);
@@ -54,7 +55,7 @@ const CompanyCreate = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(error?.response?.data?.message || 'Something went wrong');
+      toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -98,21 +99,27 @@ const CompanyCreate = () => {
                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   1
                 </div>
-                <span className="ml-2 text-sm font-medium text-blue-600">Company Info</span>
+                <span className="ml-2 text-sm font-medium text-blue-600">
+                  Company Info
+                </span>
               </div>
               <div className="w-8 h-px bg-gray-300"></div>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm font-medium">
                   2
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-500">Setup</span>
+                <span className="ml-2 text-sm font-medium text-gray-500">
+                  Setup
+                </span>
               </div>
               <div className="w-8 h-px bg-gray-300"></div>
               <div className="flex items-center">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-500 text-sm font-medium">
                   3
                 </div>
-                <span className="ml-2 text-sm font-medium text-gray-500">Complete</span>
+                <span className="ml-2 text-sm font-medium text-gray-500">
+                  Complete
+                </span>
               </div>
             </div>
           </div>
@@ -129,7 +136,8 @@ const CompanyCreate = () => {
                   Create Your Company
                 </h1>
                 <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                  Let's start by giving your company a name. You can always change this later as your business grows.
+                  Let's start by giving your company a name. You can always
+                  change this later as your business grows.
                 </p>
               </div>
 
@@ -193,7 +201,9 @@ const CompanyCreate = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Manage Team</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Manage Team
+              </h3>
               <p className="text-sm text-gray-600">
                 Add team members, assign roles, and collaborate effectively.
               </p>
@@ -203,7 +213,9 @@ const CompanyCreate = () => {
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
                 <Target className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Set Goals</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Set Goals
+              </h3>
               <p className="text-sm text-gray-600">
                 Define objectives and track progress towards your targets.
               </p>
@@ -213,7 +225,9 @@ const CompanyCreate = () => {
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
                 <Briefcase className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Post Jobs</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Post Jobs
+              </h3>
               <p className="text-sm text-gray-600">
                 Create job listings and find the perfect candidates.
               </p>
@@ -223,12 +237,18 @@ const CompanyCreate = () => {
           {/* Help Text */}
           <div className="text-center mt-12">
             <p className="text-sm text-gray-500">
-              Need help? Check out our{' '}
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+              Need help? Check out our{" "}
+              <a
+                href="#"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 getting started guide
-              </a>
-              {' '}or{' '}
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
+              </a>{" "}
+              or{" "}
+              <a
+                href="#"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 contact support
               </a>
             </p>
