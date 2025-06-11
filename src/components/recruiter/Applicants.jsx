@@ -87,11 +87,7 @@ const ApplicantsManagement = () => {
 
       if (res.data.success) {
         toast.success(res.data.message);
-
-        // Refresh the applicants data immediately after status update
         await fetchAllApplicants();
-
-        // Show email dialog for sending notification
         const applicant = applicants?.applications?.find(
           (app) => app._id === id
         );
