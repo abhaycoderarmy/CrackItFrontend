@@ -13,7 +13,7 @@ const ForgotPassword = () => {
   const sendOtp = async () => {
   setIsLoading(true);
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/send-otp`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/send-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ const ForgotPassword = () => {
   const verifyOtp = async () => {
   setIsLoading(true);
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-otp`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/verify-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ const ForgotPassword = () => {
 const resetPassword = async () => {
   setIsLoading(true);
   try {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
