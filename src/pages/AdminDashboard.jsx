@@ -33,7 +33,7 @@ const AdminDashboard = () => {
   const [showNewsletterModal, setShowNewsletterModal] = useState(false);
 
   const getAuthHeaders = () => {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("token");
     return {
       method: "GET",
       headers: {
