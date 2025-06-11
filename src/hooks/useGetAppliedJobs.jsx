@@ -10,10 +10,7 @@ const useGetAppliedJobs = () => {
   useEffect(() => {
     const fetchAppliedJobs = async () => {
       try {
-        // const res = await axios.get(`${APPLICATION_API_END_POINT}/get`, {
-        //   withCredentials: true,
-        // });
-        const res = await axios.get(`$APPLICATION_API_END_POINT}`, {
+        const res = await axios.get(`${APPLICATION_API_END_POINT}/get`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -26,7 +23,9 @@ const useGetAppliedJobs = () => {
         console.log(error);
       }
     };
+
     fetchAppliedJobs();
-  }, []);
+  }, [dispatch]);
 };
+
 export default useGetAppliedJobs;
