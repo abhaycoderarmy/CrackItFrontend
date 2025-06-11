@@ -23,7 +23,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
 import {
   Briefcase,
   Building2,
@@ -48,6 +47,7 @@ const EditJob = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { companies } = useSelector((store) => store.company);
+  const [companyList, setCompanyList] = useState([]);
 
   const [input, setInput] = useState({
     title: "",
@@ -60,6 +60,7 @@ const EditJob = () => {
     position: 0,
     companyId: "",
   });
+
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
@@ -67,7 +68,6 @@ const EditJob = () => {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        // const res = await axios.get(`${JOB_API_END_POINT}/get/${id}`, { withCredentials: true })
         const res = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -97,6 +97,31 @@ const EditJob = () => {
     fetchJob();
   }, [id]);
 
+  // Fetch companies if not in Redux
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/company/get`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (res.data.success) {
+          setCompanyList(res.data.companies);
+        }
+      } catch (error) {
+        toast.error("Failed to load companies");
+      }
+    };
+
+    if (!companies || companies.length === 0) {
+      fetchCompanies();
+    }
+  }, [companies]);
+
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -113,24 +138,14 @@ const EditJob = () => {
         ...input,
         requirements: input.requirements.split(",").map((req) => req.trim()),
       };
-      // const res = await axios.put(
-      //   `${JOB_API_END_POINT}/update/${id}`,
-      //   payload,
-      //   {
-      //     headers: { "Content-Type": "application/json" },
-      //     withCredentials: true,
-      //   }
-      // );
-      const res = await axios.put(
-        `${JOB_API_END_POINT}/update/${id}`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+
+      const res = await axios.put(`${JOB_API_END_POINT}/update/${id}`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
       if (res.data.success) {
         toast.success("Job updated successfully");
         navigate("/admin/jobs");
@@ -143,22 +158,16 @@ const EditJob = () => {
   };
 
   const deleteHandler = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this job? This action cannot be undone."
-      )
-    )
+    if (!window.confirm("Are you sure you want to delete this job?"))
       return;
     setLoading(true);
     try {
-      // const res = await axios.delete(`${JOB_API_END_POINT}/jobs/${id}`, {
-      //   withCredentials: true,
-      // });
-      const res = await axios.delete(`${JOB_API_END_POINT}/jobs/${id}`, {
+      const res = await axios.delete(`${JOB_API_END_POINT}/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       if (res.data.success) {
         toast.success("Job deleted successfully");
         navigate("/admin/jobs");
@@ -182,20 +191,17 @@ const EditJob = () => {
       name: "description",
       label: "Job Description",
       icon: FileText,
-      placeholder:
-        "Provide a detailed description of the role, responsibilities, and what the candidate will be doing...",
+      placeholder: "Describe the role and responsibilities...",
       type: "textarea",
-      description:
-        "Describe the role, responsibilities, and day-to-day activities",
+      description: "Describe the role, responsibilities, and day-to-day activities",
     },
     {
       name: "requirements",
       label: "Requirements",
       icon: Star,
-      placeholder: "React, Node.js, 3+ years experience, Bachelor's degree...",
+      placeholder: "React, Node.js, 3+ years experience...",
       type: "textarea",
-      description:
-        "List required skills, qualifications, and experience (comma-separated)",
+      description: "Comma-separated skills, qualifications, experience",
     },
     {
       name: "salary",
@@ -215,7 +221,7 @@ const EditJob = () => {
       name: "jobType",
       label: "Job Type",
       icon: Clock,
-      placeholder: "e.g. Full-time, Part-time, Contract, Internship",
+      placeholder: "e.g. Full-time, Part-time, Contract",
       description: "Employment type and work arrangement",
     },
     {
@@ -223,7 +229,7 @@ const EditJob = () => {
       label: "Experience Level",
       icon: Sparkles,
       placeholder: "e.g. 3-5 years, Entry Level, Senior Level",
-      description: "Required years of experience or experience level",
+      description: "Required years of experience or level",
     },
     {
       name: "position",
@@ -253,7 +259,7 @@ const EditJob = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       <Navbar />
 
-      {/* Header Section */}
+      {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200/60 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -304,19 +310,16 @@ const EditJob = () => {
 
           <CardContent>
             <form onSubmit={submitHandler} className="space-y-8">
-              {/* Form Fields Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {formFields.map((field) => {
-                  const IconComponent = field.icon;
+                  const Icon = field.icon;
                   return (
                     <div
                       key={field.name}
-                      className={
-                        field.type === "textarea" ? "lg:col-span-2" : ""
-                      }
+                      className={field.type === "textarea" ? "lg:col-span-2" : ""}
                     >
                       <Label className="flex items-center gap-2 mb-3 text-slate-700 font-medium">
-                        <IconComponent className="w-5 h-5 text-indigo-600" />
+                        <Icon className="w-5 h-5 text-indigo-600" />
                         {field.label}
                       </Label>
                       {field.description && (
@@ -357,27 +360,26 @@ const EditJob = () => {
                   <p className="text-sm text-slate-500 mb-2">
                     Select the company for this job posting
                   </p>
-                  <Select
-                    value={input.companyId}
-                    onValueChange={selectChangeHandler}
-                  >
+                  <Select value={input.companyId} onValueChange={selectChangeHandler}>
                     <SelectTrigger className="w-full h-12 border-slate-200 focus:border-indigo-400 focus:ring-indigo-400/20">
                       <SelectValue placeholder="Select a company" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {companies.map((company) => (
-                          <SelectItem key={company._id} value={company._id}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
+                        {(companies.length > 0 ? companies : companyList).map(
+                          (company) => (
+                            <SelectItem key={company._id} value={company._id}>
+                              {company.name}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-slate-200">
                 <Button
                   type="submit"
@@ -396,7 +398,6 @@ const EditJob = () => {
                     </>
                   )}
                 </Button>
-
                 <Button
                   type="button"
                   disabled={loading}
@@ -418,7 +419,7 @@ const EditJob = () => {
                 </Button>
               </div>
 
-              {/* Warning Note */}
+              {/* Warning */}
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div className="text-sm">
