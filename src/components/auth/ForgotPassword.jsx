@@ -11,49 +11,84 @@ const ForgotPassword = () => {
   const navigate = useNavigate();
 
   const sendOtp = async () => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // toast.success('OTP sent to your email');
+  setIsLoading(true);
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/send-otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      // toast.success(data.message);
       setStep(2);
-    } catch (err) {
-      // toast.error(err.response?.data?.message || 'Failed to send OTP');
-    } finally {
-      setIsLoading(false);
+    } else {
+      // toast.error(data.message);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    // toast.error('Failed to send OTP');
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const verifyOtp = async () => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // toast.success('OTP verified');
-      setStep(3);
-    } catch (err) {
-      // toast.error(err.response?.data?.message || 'Invalid OTP');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  setIsLoading(true);
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, otp }),
+    });
 
-  const resetPassword = async () => {
-    setIsLoading(true);
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // toast.success('Password reset successful');
-      setStep(4);
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-    } catch (err) {
-      // toast.error(err.response?.data?.message || 'Failed to reset password');
-    } finally {
-      setIsLoading(false);
+    const data = await res.json();
+    if (res.ok) {
+      // toast.success(data.message);
+      setStep(3);
+    } else {
+      // toast.error(data.message);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    // toast.error('OTP verification failed');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+const resetPassword = async () => {
+  setIsLoading(true);
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, newPassword }),
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      // toast.success(data.message);
+      setStep(4);
+      setTimeout(() => navigate('/login'), 2000);
+    } else {
+      // toast.error(data.message);
+    }
+  } catch (err) {
+    console.error(err);
+    // toast.error('Password reset failed');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const getStepInfo = () => {
     switch (step) {
