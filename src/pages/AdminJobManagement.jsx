@@ -29,13 +29,15 @@ const AdminJobManagement = () => {
 
       console.log("Fetching admin jobs...");
 
+      const token = localStorage.getItem("authToken"); // or "token" based on your setup
+
       const response = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/job-management`,
         {
           method: "GET",
-          credentials: "include",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
