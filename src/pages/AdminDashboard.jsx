@@ -291,7 +291,7 @@ const AdminDashboard = () => {
             <Activity className="h-16 w-16 mx-auto animate-pulse" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-4">
-            Connection Error
+            Connection Error(yaha se aa raha hai)
           </h2>
           <p className="text-red-200 mb-8">{error}</p>
           <button
