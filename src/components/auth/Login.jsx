@@ -35,7 +35,7 @@ const Login = () => {
       if (res.data.success) {
         dispatch(setUser(res.data.user));
         console.log("Token",res.data);
-        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.user.token);
         
 
         console.log("User after login:", res.data.user);
